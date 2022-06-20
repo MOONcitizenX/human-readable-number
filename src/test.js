@@ -1,4 +1,4 @@
-module.exports = function toReadable(num) {
+const toReadable = (num) => {
     const map = {
         ones: {
             0: "zero",
@@ -36,10 +36,45 @@ module.exports = function toReadable(num) {
         },
         bigRound: {
             3: "hundred",
+            4: "thousand",
+            7: "million",
+            10: "billion",
+            13: "trillion",
         },
     };
 
-    const arr = [...num.toString()].reverse().map((el) => +el);
+    const arrFromNum = [...`${num}`];
+
+    // let lastTwo;
+
+    // //check if number more than 1 digit long
+    // if (arrFromNum.length > 1) {
+    //     lastTwo = num.toString().slice(-2);
+    // }
+    // console.log(lastTwo);
+
+    // const result = [];
+
+    // if (arrFromNum.length in map.bigRound) {
+    //     //adding bigRound if length matches `ones` + `biground`
+    //     result.push(map.bigRound[arrFromNum.length]);
+    //     result.unshift(map.ones[arrFromNum[0]]);
+    // }
+    // if (lastTwo in map.afterTen) {
+    //     //adding lastTwo if 10-19 at the end
+    //     result.push(map.afterTen[lastTwo]);
+    // } else if (lastTwo in map.tens) {
+    //     //adding lastTwo if % 10 === 0
+    //     result.push(map.tens[lastTwo]);
+    // } else if (+(`${lastTwo}`[0] + "0") in map.tens) {
+    //     //adding if 1-9 last number
+    //     result.push(map.tens[+(`${lastTwo}`[0] + "0")]);
+    //     result.push(map.ones[lastTwo.toString()[1]]);
+    // }
+
+    const arr = [...num.toString()].reverse().map((el) => +el); // reversed num
+
+    console.log(arr);
 
     const result = [];
 
@@ -48,10 +83,13 @@ module.exports = function toReadable(num) {
     const getTwo = (arr) => {
         const lastTwo = `${arr[1]}${arr[0]}`;
         if (lastTwo in map.tens) {
+            // if lastTwo % 10 === 0
             return map.tens[lastTwo];
         } else if (lastTwo in map.afterTen) {
+            // if lastTwo 10-19
             return map.afterTen[lastTwo];
         } else if (lastTwo[0] === "0") {
+            // if lastTwo is 0x or 00
             return lastTwo[1] === "0" ? "" : map.ones[lastTwo[1]];
         }
         return `${map.tens[lastTwo[0] + 0]} ${map.ones[lastTwo[1]]}`;
@@ -61,10 +99,13 @@ module.exports = function toReadable(num) {
         return `${map.ones[arr[2]]} ${map.bigRound[3]}`;
     };
 
+    // 1 digit
     if (arr.length === 1) result.push(getOne(arr));
 
+    // 2 digits
     if (arr.length === 2) result.push(getTwo(arr));
 
+    // 3+ digits
     if (arr.length > 2) {
         result.push(getTwo(arr));
         result.unshift(getHundred(arr));
@@ -72,3 +113,5 @@ module.exports = function toReadable(num) {
 
     return result.filter((el) => el).join(" ");
 };
+
+console.log(toReadable(692));
